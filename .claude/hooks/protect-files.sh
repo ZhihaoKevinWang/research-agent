@@ -1,6 +1,7 @@
 #!/bin/bash
-# Block accidental edits to protected files
-# Customize PROTECTED_PATTERNS below for your project
+# Block accidental edits to protected files and directories
+# Protects: raw data, settings
+
 INPUT=$(cat)
 TOOL=$(echo "$INPUT" | jq -r '.tool_name')
 FILE=""
@@ -15,21 +16,29 @@ if [ -z "$FILE" ]; then
   exit 0
 fi
 
+BASENAME=$(basename "$FILE")
+
 # ============================================================
-# CUSTOMIZE: Add patterns for files you want to protect
-# Uses basename matching — add full paths for more precision
+# RULE 1: Protect specific files by name
 # ============================================================
-PROTECTED_PATTERNS=(
-  "Bibliography_base.bib"
+PROTECTED_FILES=(
   "settings.json"
+  "references.bib"
 )
 
-BASENAME=$(basename "$FILE")
-for PATTERN in "${PROTECTED_PATTERNS[@]}"; do
+for PATTERN in "${PROTECTED_FILES[@]}"; do
   if [[ "$BASENAME" == "$PATTERN" ]]; then
     echo "Protected file: $BASENAME. Edit manually or remove protection in .claude/hooks/protect-files.sh" >&2
     exit 2
   fi
 done
+
+# ============================================================
+# RULE 2: Protect data/raw/ directory — NEVER modify raw data
+# ============================================================
+if [[ "$FILE" == */data/raw/* ]]; then
+  echo "PROTECTED: data/raw/ is read-only. Raw data must never be modified. Use data/processed/ for cleaned data." >&2
+  exit 2
+fi
 
 exit 0

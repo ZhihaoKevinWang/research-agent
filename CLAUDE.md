@@ -1,12 +1,13 @@
-# CLAUDE.MD -- Academic Project Development with Claude Code
+# CLAUDE.MD -- Consumer Psychology Experimental Research with Claude Code
 
 <!-- HOW TO USE: Replace [BRACKETED PLACEHOLDERS] with your project info.
-     Customize Beamer environments and CSS classes for your theme.
+     Customize analysis conventions and manuscript sections for your project.
      Keep this file under ~150 lines — Claude loads it every session.
      See the guide at docs/workflow-guide.html for full documentation. -->
 
 **Project:** [YOUR PROJECT NAME]
 **Institution:** [YOUR INSTITUTION]
+**PI / Lead Researcher:** [YOUR NAME]
 **Branch:** main
 
 ---
@@ -14,8 +15,8 @@
 ## Core Principles
 
 - **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
-- **Verify after** -- compile/render and confirm output at the end of every task
-- **Single source of truth** -- Beamer `.tex` is authoritative; Quarto `.qmd` derives from it
+- **Verify after** -- run analyses and confirm outputs at the end of every task
+- **Preregistration optional** -- pilots and exploratory studies need no prereg; use when ready to confirm
 - **Quality gates** -- nothing ships below 80/100
 - **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
 
@@ -25,37 +26,57 @@
 
 ```
 [YOUR-PROJECT]/
-├── CLAUDE.MD                    # This file
+├── CLAUDE.md                    # This file
 ├── .claude/                     # Rules, skills, agents, hooks
-├── Bibliography_base.bib        # Centralized bibliography
-├── Figures/                     # Figures and images
-├── Preambles/header.tex         # LaTeX headers
-├── Slides/                      # Beamer .tex files
-├── Quarto/                      # RevealJS .qmd files + theme
-├── docs/                        # GitHub Pages (auto-generated)
-├── scripts/                     # Utility scripts + R code
-├── quality_reports/             # Plans, session logs, merge reports
-├── explorations/                # Research sandbox (see rules)
-├── templates/                   # Session log, quality report templates
-└── master_supporting_docs/      # Papers and existing slides
+├── references.bib               # Shared bibliography (all studies)
+├── literature/                  # PDFs and reading notes (shared)
+├── manuscripts/                 # Combined paper drafts spanning studies
+├── slides/                      # Conference / lab talk presentations
+├── quality_reports/             # Project-level plans, session logs
+├── explorations/                # Cross-study sandbox
+│
+├── Study 1/                     # Self-contained study unit
+│   ├── README.md                # Study name, hypotheses, status, N
+│   ├── preregistrations/        # Optional: OSF/AsPredicted docs
+│   ├── experiments/
+│   │   ├── stimuli/             # Images, vignettes, ads
+│   │   ├── qualtrics/           # .qsf survey exports
+│   │   └── materials/           # Consent forms, debrief scripts
+│   ├── data/
+│   │   ├── raw/                 # PROTECTED — Qualtrics exports, never modified
+│   │   ├── processed/           # Cleaned analysis-ready data
+│   │   └── codebook.md          # Variable dictionary
+│   ├── scripts/
+│   │   └── analysis.R           # Main analysis script
+│   ├── output/
+│   │   ├── figures/             # Publication-ready .pdf and .png
+│   │   └── tables/              # .html, .tex, .docx tables
+│   └── quality_reports/         # Study-level review reports
+│
+├── Study 2/                     # Identical structure
+└── Study 3/                     # Identical structure (add as needed)
 ```
+
+## Scope Convention
+
+**Default scope is the study being worked on.** Claude reads and writes only within `Study N/` for all routine tasks. Cross-study access is granted only for `/initialize-project`, `/review-manuscript`, and explicitly cross-study requests.
 
 ---
 
 ## Commands
 
 ```bash
-# LaTeX (3-pass, XeLaTeX only)
-cd Slides && TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-BIBINPUTS=..:$BIBINPUTS bibtex file
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
+# Run analysis script
+Rscript scripts/[script_name].R
 
-# Deploy Quarto to GitHub Pages
-./scripts/sync_to_docs.sh LectureN
+# Render manuscript (R Markdown)
+Rscript -e "rmarkdown::render('manuscripts/[file].Rmd')"
+
+# Run all analyses in order
+Rscript scripts/run_all.R
 
 # Quality score
-python scripts/quality_score.py Quarto/file.qmd
+python scripts/quality_score.py manuscripts/[file].Rmd
 ```
 
 ---
@@ -65,8 +86,8 @@ python scripts/quality_score.py Quarto/file.qmd
 | Score | Gate | Meaning |
 |-------|------|---------|
 | 80 | Commit | Good enough to save |
-| 90 | PR | Ready for deployment |
-| 95 | Excellence | Aspirational |
+| 90 | PR / Submit | Ready for co-author review |
+| 95 | Excellence | Journal-ready |
 
 ---
 
@@ -74,60 +95,49 @@ python scripts/quality_score.py Quarto/file.qmd
 
 | Command | What It Does |
 |---------|-------------|
-| `/compile-latex [file]` | 3-pass XeLaTeX + bibtex |
-| `/deploy [LectureN]` | Render Quarto + sync to docs/ |
-| `/extract-tikz [LectureN]` | TikZ → PDF → SVG |
-| `/proofread [file]` | Grammar/typo/overflow review |
-| `/visual-audit [file]` | Slide layout audit |
-| `/pedagogy-review [file]` | Narrative, notation, pacing review |
+| `/analyze-data [dataset]` | End-to-end R analysis with review |
+| `/write-section [section]` | Draft manuscript section from results |
+| `/make-slides [study]` | Generate presentation slides from study |
+| `/review-manuscript [file]` | Multi-agent manuscript review |
+| `/revision-plan [reviews]` | Plan response to reviewer comments |
+| `/identify-mechanism` | Synthesize all study results → recommend focal mechanism |
+| `/lit-review [topic]` | Context-grounded literature search + thematic synthesis |
+| `/proofread [file]` | Grammar/typo/style review |
 | `/review-r [file]` | R code quality review |
-| `/qa-quarto [LectureN]` | Adversarial Quarto vs Beamer QA |
-| `/slide-excellence [file]` | Combined multi-agent review |
-| `/translate-to-quarto [file]` | Beamer → Quarto translation |
-| `/validate-bib` | Cross-reference citations |
-| `/devils-advocate` | Challenge slide design |
-| `/create-lecture` | Full lecture creation |
 | `/commit [msg]` | Stage, commit, PR, merge |
-| `/lit-review [topic]` | Literature search + synthesis |
-| `/research-ideation [topic]` | Research questions + strategies |
-| `/interview-me [topic]` | Interactive research interview |
-| `/review-paper [file]` | Manuscript review |
-| `/data-analysis [dataset]` | End-to-end R analysis |
+| `/research-ideation [topic]` | Research questions + experiment designs |
+| `/interview-me [topic]` | Interactive research development session |
+| `/initialize-project` | Auto-generate project CLAUDE.md + MEMORY.md |
 
 ---
 
-<!-- CUSTOMIZE: Replace the example entries below with your own
-     Beamer environments and Quarto CSS classes. These are examples
-     from the original project — delete them and add yours. -->
+## Preregistration Status
 
-## Beamer Custom Environments
+<!-- Track which studies are preregistered and where -->
 
-| Environment       | Effect        | Use Case       |
-|-------------------|---------------|----------------|
-| `[your-env]`      | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `keybox` | Gold background box | Key points |
-| `highlightbox` | Gold left-accent box | Highlights |
-| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions |
--->
-
-## Quarto CSS Classes
-
-| Class              | Effect        | Use Case       |
-|--------------------|---------------|----------------|
-| `[.your-class]`    | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `.smaller` | 85% font | Dense content slides |
-| `.positive` | Green bold | Good annotations |
--->
+| Study | Preregistration | Status | Link |
+|-------|----------------|--------|------|
+| Study 1: [Name] | OSF / AsPredicted | [Draft / Locked / Collected] | [URL] |
+| Study 2: [Name] | -- | [Planned] | -- |
 
 ---
 
-## Current Project State
+## Manuscript Status
 
-| Lecture | Beamer | Quarto | Key Content |
-|---------|--------|--------|-------------|
-| 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
-| 2: [Topic] | `Lecture02_Topic.tex` | -- | [Brief description] |
+| File | Journal Target | Status | Key Variables |
+|------|---------------|--------|--------------|
+| `manuscripts/[paper].Rmd` | [Journal] | [Draft / Submitted / R&R] | [Brief note] |
+
+---
+
+## Project-Specific Analysis Conventions
+
+<!-- Customize for your research -->
+
+| Convention | Value | Rationale |
+|-----------|-------|-----------|
+| Alpha threshold | 0.05 (two-tailed) | [PLACEHOLDER] |
+| Power target | 0.80 | [PLACEHOLDER] |
+| Effect size reference | d = [PLACEHOLDER] | Pilot / prior work |
+| Exclusion criteria | [PLACEHOLDER] | [Brief rationale] |
+| Primary DV | [PLACEHOLDER] | [Scale / measure] |

@@ -1,0 +1,168 @@
+%
+% Simple template for generating drafts of papers and articles
+%
+\documentclass[8pt,a6]{article}
+\usepackage{authblk}
+\usepackage{fullpage}
+\usepackage{amssymb,amsmath}
+\usepackage[utf8x]{inputenc}
+\usepackage{comment}
+\usepackage[T1]{fontenc}
+\usepackage{siunitx}
+\usepackage[version=3]{mhchem}
+
+\usepackage[paperwidth=20cm,paperheight=8cm,margin=0.5cm]{geometry} % 横向长条
+
+\usepackage{natbib}
+\bibliographystyle{apa}
+
+\usepackage{tikz}
+\usepackage{siunitx}
+\usetikzlibrary{positioning}
+\tikzset{mynode/.style={draw,text width=1in,align=center}
+}
+% accept chinese characters
+% no page numbers
+\pagenumbering{gobble}
+
+
+
+\usepackage[left]{lineno}
+%\linenumbers
+
+\usepackage{setspace}
+\doublespacing
+
+\usepackage[unicode=true]{hyperref}
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            colorlinks=false,
+            pdfborder={0 0 0}}
+\urlstyle{same} % don't use a different (monospace) font for urls
+
+\setcounter{secnumdepth}{5}
+\usetikzlibrary{positioning,arrows.meta,calc}
+
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+% Redefine \includegraphics so that, unless explicit options are
+% given, the image width will not exceed the width or the height of the page.
+% Images get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\ScaleWidthIfNeeded{%
+ \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\def\ScaleHeightIfNeeded{%
+  \ifdim\Gin@nat@height>0.9\textheight
+    0.9\textheight
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+\setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Review on Abstract Language and Intrinsic Motivation}
+\author[1,2]{Zhihao Wang}
+\author[2]{Ying Zhang}
+\affil[1]{London Business School}
+\affil[2]{Guanghua School of Management, Peking University}
+
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%\maketitle
+
+
+% In your preamble:
+% \usepackage{tikz}
+% \usetikzlibrary{positioning,arrows.meta,calc}
+
+\begin{figure}[h!]
+  \centering
+  \tikzset{
+    >=Latex,
+    mynode/.style={
+      draw, rounded corners, align=center,
+      inner sep=6pt, minimum width=34mm, minimum height=10mm
+    },
+    coef/.style={font=\footnotesize, midway, sloped, fill=white, inner sep=1pt}
+  }
+
+\begin{tikzpicture}[node distance=32mm,>=Stealth,thick]
+  % Nodes (mediator on top)
+  \node[mynode]                          (x) {PPPG};
+  \node[mynode, right=60mm of x]         (y) {Willingness to Pay};
+  \node[mynode, above=18mm of $(x)!0.5!(y)$] (m) {Trustworthiness};
+  % Paths
+  % a-path label closer to X
+  \draw[->] (x) -- node[coef, above] {$a = 0.51^{***}$} (m);
+  \draw[->] (m) -- node[coef, above] {$b=2.1^{**}$} (y);
+
+  % c'-path with an extra label below for "direct effect"
+  \draw[->] (x) -- node[coef, above, pos=0.58] {$c'= 1.05^{***}$}
+                 node[coef, below, pos=0.58] {$c=0.02(n.s.)$} (y);
+
+\end{tikzpicture}
+
+
+\end{figure}
+
+
+
+
+\end{document}
+
+
+\begin{figure}[h!]
+  \centering
+  \tikzset{
+    >=Latex,
+    mynode/.style={
+      draw, rounded corners, align=center,
+      inner sep=6pt, minimum width=34mm, minimum height=10mm
+    },
+    coef/.style={font=\footnotesize, midway, sloped, fill=white, inner sep=1pt}
+  }
+
+\begin{tikzpicture}[node distance=32mm,>=Stealth,thick]
+  % Nodes (mediator on top)
+  \node[mynode]                          (x) {Goal framing\\(Abstract = 1,\ Concrete = 0)};
+  \node[mynode, right=60mm of x]         (y) {Willingness\\to Help};
+  \node[mynode, above=18mm of $(x)!0.5!(y)$] (m) {Perceived\\Intrinsic Motivation};
+  \node[mynode, above=25mm of x]         (w) {Speaker Environment\\(Private = 1,\ Public = 0)};
+
+  % Paths
+  % a-path label closer to X
+  \draw[->] (x) -- node[coef, above, pos=0.28] {$b = .48^{***}$} (m);
+  \draw[->] (m) -- node[coef, above] {$b = .68^{***}$} (y);
+
+  % c'-path with an extra label below for "direct effect"
+  \draw[->] (x) -- node[coef, above, pos=0.58] {$b' = -.21^{*}$}
+                 node[coef, below, pos=0.58] {$b = .14$} (y);
+
+  % Moderation arrow placed to the a-path tap point
+  \coordinate (tap) at ($(x)!0.63!(m)$);
+  \draw[->] (w) -- node[coef, above, sloped, pos=0.55] {$b = .78^{***}$} (tap);
+\end{tikzpicture}
+
+  \vspace{4pt}
+  {\footnotesize
+  Goal Framing $\rightarrow$ Perceived Intrinsic Motivation $\rightarrow$ Willingness to Help\\
+  Private Environment: $0.60^{***}$\\
+   Public Environment: $0.06$\\
+  Moderated Mediation Index: $0.54$, Bootstrap 95\% CI = [0.22, 0.86]\\
+  ${}^{*}p{<}.05$, ${}^{**}p{<}.01$, ${}^{***}p{<}.001$.
+  }
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

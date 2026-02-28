@@ -1,8 +1,8 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
   - "scripts/**/*.R"
+  - "manuscripts/**"
+  - "preregistrations/**"
 ---
 
 # Quality Gates & Scoring Rubrics
@@ -10,40 +10,38 @@ paths:
 ## Thresholds
 
 - **80/100 = Commit** -- good enough to save
-- **90/100 = PR** -- ready for deployment
-- **95/100 = Excellence** -- aspirational
-
-## Quarto Slides (.qmd)
-
-| Severity | Issue | Deduction |
-|----------|-------|-----------|
-| Critical | Compilation failure | -100 |
-| Critical | Equation overflow | -20 |
-| Critical | Broken citation | -15 |
-| Critical | Typo in equation | -10 |
-| Major | Text overflow | -5 |
-| Major | TikZ label overlap | -5 |
-| Major | Notation inconsistency | -3 |
-| Minor | Font size reduction | -1 per slide |
-| Minor | Long lines (>100 chars) | -1 (EXCEPT documented math formulas) |
+- **90/100 = Co-author review / submission** -- ready for external eyes
+- **95/100 = Excellence** -- journal-ready
 
 ## R Scripts (.R)
 
 | Severity | Issue | Deduction |
 |----------|-------|-----------|
 | Critical | Syntax errors | -100 |
-| Critical | Domain-specific bugs | -30 |
+| Critical | Exclusions not applied per preregistration | -30 |
+| Minor | Confirmatory/exploratory not labeled (recommended) | -3 |
 | Critical | Hardcoded absolute paths | -20 |
 | Major | Missing set.seed() | -10 |
-| Major | Missing figure generation | -5 |
+| Major | Effect sizes not reported | -10 |
+| Major | Missing manipulation check | -10 |
+| Major | Wrong test for design (e.g., lm for binary DV) | -15 |
+| Minor | Missing RDS save for key objects | -5 |
+| Minor | Long lines without math justification | -1 per line |
 
-## Beamer Slides (.tex)
+## Manuscripts (.Rmd / .tex / .docx)
 
 | Severity | Issue | Deduction |
 |----------|-------|-----------|
-| Critical | XeLaTeX compilation failure | -100 |
-| Critical | Undefined citation | -15 |
-| Critical | Overfull hbox > 10pt | -10 |
+| Critical | Render/compile failure | -100 |
+| Critical | Exploratory finding presented as confirmatory | -40 |
+| Critical | Broken citation | -15 |
+| Critical | N does not match preregistration (undocumented) | -20 |
+| Major | Missing effect size for any test | -10 |
+| Major | Missing 95% CI for any estimate | -5 |
+| Major | Hypothesis not stated formally | -5 |
+| Major | Manipulation check not reported | -10 |
+| Minor | Abstract exceeds word limit | -5 |
+| Minor | APA formatting errors | -2 per instance |
 
 ## Enforcement
 
@@ -56,12 +54,11 @@ paths:
 Generated **only at merge time**. Use `templates/quality-report.md` for format.
 Save to `quality_reports/merges/YYYY-MM-DD_[branch-name].md`.
 
-## Tolerance Thresholds (Research)
+## Effect Size Benchmarks (Consumer Psychology)
 
-<!-- Customize for your domain -->
-
-| Quantity | Tolerance | Rationale |
-|----------|-----------|-----------|
-| Point estimates | [e.g., 1e-6] | [Numerical precision] |
-| Standard errors | [e.g., 1e-4] | [MC variability] |
-| Coverage rates | [e.g., +/- 0.01] | [MC with B reps] |
+| Effect | Small | Medium | Large |
+|--------|-------|--------|-------|
+| Cohen's d | 0.20 | 0.50 | 0.80 |
+| η² | 0.01 | 0.06 | 0.14 |
+| r | 0.10 | 0.30 | 0.50 |
+| f² (regression) | 0.02 | 0.15 | 0.35 |
