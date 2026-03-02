@@ -1,6 +1,6 @@
 #!/bin/bash
 # Block accidental edits to protected files and directories
-# Protects: raw data, settings
+# Protects: project settings, Study N/ researcher files (outside RAgent works/)
 
 INPUT=$(cat)
 TOOL=$(echo "$INPUT" | jq -r '.tool_name')
@@ -34,11 +34,14 @@ for PATTERN in "${PROTECTED_FILES[@]}"; do
 done
 
 # ============================================================
-# RULE 2: Protect data/raw/ directory — NEVER modify raw data
+# RULE 2: Protect Study N/ researcher files
+# All writes inside Study N/ must go through Study N/RAgent works/
 # ============================================================
-if [[ "$FILE" == */data/raw/* ]]; then
-  echo "PROTECTED: data/raw/ is read-only. Raw data must never be modified. Use data/processed/ for cleaned data." >&2
-  exit 2
+if [[ "$FILE" =~ /Study\ [^/]+/ ]]; then
+  if [[ "$FILE" != */RAgent\ works/* ]]; then
+    echo "PROTECTED: Writes to Study N/ are only allowed inside 'Study N/RAgent works/'. The researcher's data, scripts, and documents are read-only. Write to $(echo "$FILE" | sed 's|/Study \([^/]*\)/|/Study \1/RAgent works/|') instead." >&2
+    exit 2
+  fi
 fi
 
 exit 0

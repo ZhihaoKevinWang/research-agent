@@ -25,10 +25,12 @@ Read `Study N/README.md` first to understand the study design, hypotheses, and v
 
 - **Default working directory:** `Study N/` (confirm with user if not specified)
 - **Follow R code conventions** in `.claude/rules/r-code-conventions.md`
-- **Save scripts** to `Study N/scripts/` (e.g., `analysis.R`)
-- **Save all outputs** to `Study N/output/figures/`, `Study N/output/tables/`, `Study N/output/*.rds`
-- **Run scripts from the study directory:** `cd "Study N" && Rscript scripts/analysis.R`
+- **Save scripts** to `Study N/RAgent works/scripts/` (e.g., `analysis.R`)
+- **Save all outputs** to `Study N/RAgent works/output/figures/`, `Study N/RAgent works/output/tables/`, `Study N/RAgent works/output/*.rds`
+- **Read source data** from `Study N/data/processed/` (researcher's folder — read-only, never modify)
+- **Run scripts from the agent workspace:** `cd "Study N/RAgent works" && Rscript scripts/analysis.R`
 - **Run stats-reviewer** on results before presenting
+- **Never write to `Study N/` outside of `Study N/RAgent works/`**
 
 ---
 
@@ -36,23 +38,23 @@ Read `Study N/README.md` first to understand the study design, hypotheses, and v
 
 ### Phase 0: Orient to the Study
 
-1. **Check for existing scripts first:**
+1. **Check for existing agent scripts first:**
    ```
-   Glob("Study N/scripts/**/*.R")
+   Glob("Study N/RAgent works/scripts/**/*.R")
    ```
-   If any `.R` files exist, read them all before doing anything else. Build on what's there — extend, fix, or add sections rather than rewriting. Preserve the user's variable names, structure, and style.
+   If any `.R` files exist, read them all before doing anything else. Build on what's there — extend, fix, or add sections rather than rewriting. Preserve variable names, structure, and style.
 
-2. Read `Study N/README.md` — hypotheses, design, key variables
-3. Check `Study N/preregistrations/` — if a prereg exists, read it; otherwise proceed freely
-4. Confirm data file location: `Study N/data/processed/[file].csv`
+2. Read `Study N/README.md` — hypotheses, design, key variables (read-only)
+3. Check `Study N/preregistrations/` — if a prereg exists, read it; otherwise proceed freely (read-only)
+4. Confirm data file location: `Study N/data/processed/[file].csv` (read-only)
 
 ### Phase 1: Setup & Data Loading
 
 1. Read `.claude/rules/r-code-conventions.md`
-2. Create/update `Study N/scripts/analysis.R` with proper header
+2. Create/update `Study N/RAgent works/scripts/analysis.R` with proper header
 3. Load packages at top via `library()`
 4. Set seed: `set.seed(YYYYMMDD)` — use data-collection date if known
-5. Load data: `read_csv("data/processed/[file].csv")` (path relative to study root)
+5. Load data: `read_csv("../../data/processed/[file].csv")` (path relative to `RAgent works/scripts/`)
 6. Inspect: `dim()`, `summary()`, `colnames()`, missingness rates
 
 ### Phase 2: Exclusions
@@ -92,16 +94,17 @@ Report for each test: test statistic, df, exact p, effect size, 95% CI, N per ce
 **Figures:** ggplot2 with `theme_project()`, bar plots with 95% CI error bars.
 ```r
 ggsave("output/figures/fig1_means.pdf", width = 6.5, height = 4, dpi = 300)
+# Paths are relative to `Study N/RAgent works/` working directory
 ```
 
 **Tables:** `modelsummary` or `gt`; export `.html` + `.docx`.
 
 ### Phase 6: Save & Review
 
-1. `saveRDS()` for all key objects into `output/`
+1. `saveRDS()` for all key objects into `output/` (relative to `Study N/RAgent works/`)
 2. Run stats-reviewer:
    ```
-   Delegate to stats-reviewer: "Review Study N/scripts/analysis.R"
+   Delegate to stats-reviewer: "Review Study N/RAgent works/scripts/analysis.R"
    ```
 3. Address Critical and High issues before presenting results
 
@@ -114,11 +117,11 @@ ggsave("output/figures/fig1_means.pdf", width = 6.5, height = 4, dpi = 300)
 # Study N: [Study Name]
 # Author: [from CLAUDE.md]
 # Purpose: [Brief description]
-# Preregistration: preregistrations/[file].md (if any)
-# Inputs:  data/processed/[study]_clean.csv
-# Outputs: output/figures/*, output/tables/*, output/*.rds
+# Preregistration: ../../preregistrations/[file].md (if any)
+# Inputs:  ../../data/processed/[study]_clean.csv
+# Outputs: ../output/figures/*, ../output/tables/*, ../output/*.rds
 # ============================================================
-# Run from: Study N/ directory
+# Run from: Study N/RAgent works/ directory
 # ============================================================
 ```
 

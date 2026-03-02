@@ -43,43 +43,39 @@ Read each discovered file to extract:
 
 ---
 
-## Phase 2: Scaffold Study Folders
+## Phase 2: Create RAgent Works Folders
 
-**From the proposal, determine the study list.** For each study described:
+**Claude does NOT scaffold a full study skeleton.** The researcher owns the `Study N/` folder and its existing structure. Claude only creates its workspace subfolder.
 
-1. Create `Study N/` with the full standard structure:
+**From the proposal and existing folder scan, determine the study list.** For each study:
 
-```bash
-mkdir -p "Study N/data/raw"
-mkdir -p "Study N/data/processed"
-mkdir -p "Study N/experiments/stimuli"
-mkdir -p "Study N/experiments/qualtrics"
-mkdir -p "Study N/experiments/materials"
-mkdir -p "Study N/preregistrations"
-mkdir -p "Study N/scripts"
-mkdir -p "Study N/output/figures"
-mkdir -p "Study N/output/tables"
-mkdir -p "Study N/quality_reports"
-```
+1. If `Study N/` doesn't exist yet (brand-new project), create just the top-level folder:
+   ```bash
+   mkdir -p "Study N"
+   ```
 
-2. Write `Study N/README.md` populated with real information from the proposal:
+2. Create the agent workspace inside it:
+   ```bash
+   mkdir -p "Study N/RAgent works/scripts"
+   mkdir -p "Study N/RAgent works/output/figures"
+   mkdir -p "Study N/RAgent works/output/tables"
+   mkdir -p "Study N/RAgent works/slides/figures"
+   ```
+
+3. Write `Study N/RAgent works/README.md` populated with real information from the proposal:
    - Study name (actual name, not "Study N")
    - Purpose (what it tests, why it's the right study)
    - Hypotheses (as stated in proposal)
    - Key variables (IV, DV, manipulations)
    - Status: Planning / Data Collection / Analysis / Complete
    - Target N (from proposal or power analysis)
+   - Where to find source data (e.g., `../data/processed/`)
 
-3. Write `Study N/data/codebook.md` as a template pre-filled with variable names from the proposal.
+**Do NOT create or modify any other files or folders inside `Study N/`.** Existing content (data/, scripts/, experiments/, preregistrations/, README.md, etc.) is the researcher's work and is read-only.
 
-4. Write `Study N/scripts/analysis.R` as a template pre-filled with:
-   - Correct study name in header
-   - Hypothesis labels matching the proposal
-   - Correct IV/DV variable name placeholders
+**Important:** Use exact study names from the proposal. Example: if the proposal calls it "Study 1: Scarcity Framing Experiment", the folder is `Study 1/` and the workspace is `Study 1/RAgent works/`.
 
-**Important:** Use the exact study names from the proposal, not generic "Study 1", "Study 2". Example: if the proposal calls it "Study 1: Scarcity Framing Experiment", name the folder `Study 1/` but populate README.md with the real name and description.
-
-### Also Create (if not present):
+### Also Create at Project Root (if not present):
 
 ```
 manuscripts/      ← empty, for the combined paper
@@ -186,6 +182,6 @@ Recommended next steps:
 ## Rules
 
 - **Only fill in values actually found in the proposal or existing files.** Leave `[PLACEHOLDER]` for anything that cannot be determined.
-- **Never read or modify `Study N/data/raw/`** — raw data is protected.
-- **If study folders already exist**, compare them against the proposal. Note discrepancies but do not overwrite existing analysis scripts or data.
-- **If the proposal is ambiguous** about number of studies, ask the user before scaffolding.
+- **Never modify any file in `Study N/` that is not inside `Study N/RAgent works/`.** The researcher's data, scripts, and documents are read-only.
+- **If `Study N/` already exists**, only add `Study N/RAgent works/` if it isn't there yet. Never overwrite or delete existing researcher files.
+- **If the proposal is ambiguous** about number of studies, ask the user before creating folders.

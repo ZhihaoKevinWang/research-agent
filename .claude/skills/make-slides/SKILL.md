@@ -1,6 +1,6 @@
 ---
 name: make-slides
-description: Create a Beamer presentation for the current Study N/ using the project Template/ folder. Generates figures in R, writes the .tex file, and compiles it. Requires analyze-data and write-section to be complete first.
+description: Create a Beamer presentation for the current Study N/ using the project Beamer/ folder. Generates figures in R, writes the .tex file, and compiles it. Requires analyze-data and write-section to be complete first.
 argument-hint: "[Study N]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Task"]
 ---
@@ -19,17 +19,17 @@ Before writing a single line of LaTeX, verify two things. **Halt if either fails
 
 ### Check 1 — Analysis outputs exist
 ```bash
-ls "Study N/output/figures/"
-ls "Study N/output/tables/"
-ls "Study N/output/"*.rds 2>/dev/null
+ls "Study N/RAgent works/output/figures/"
+ls "Study N/RAgent works/output/tables/"
+ls "Study N/RAgent works/output/"*.rds 2>/dev/null
 ```
-If `Study N/output/figures/` is empty or missing, stop:
+If `Study N/RAgent works/output/figures/` is empty or missing, stop:
 > "Analysis outputs not found. Please run `/analyze-data Study N` first, then come back."
 
 ### Check 2 — Written content exists
 Look for any of:
 - `manuscripts/` draft referencing this study
-- A section draft in `Study N/quality_reports/`
+- A section draft in `Study N/RAgent works/quality_reports/`
 - A `write-section` output for this study
 
 If none found, stop:
@@ -39,10 +39,10 @@ If none found, stop:
 
 ## Phase 1: Read the Template
 
-The `Template/` folder at the **project root** is the single source of truth for all design decisions.
+The `Beamer/` folder at the **project root** is the single source of truth for all design decisions.
 
 ```
-Glob("Template/**")
+Glob("Beamer/**")
 ```
 
 Read every file found:
@@ -68,7 +68,7 @@ All figures for the slides **must be regenerated** at slide-appropriate dimensio
 
 ### 2a: Create the figure script
 
-Write `Study N/scripts/slides_figures.R`:
+Write `Study N/RAgent works/scripts/slides_figures.R`:
 
 ```r
 # ============================================================
@@ -81,10 +81,10 @@ Write `Study N/scripts/slides_figures.R`:
 
 library(tidyverse)
 
-dir.create("slides/figures", recursive = TRUE, showWarnings = FALSE)
+dir.create("../slides/figures", recursive = TRUE, showWarnings = FALSE)
 
-# --- Color palette from Template/ (fill in from Phase 1) ---
-# Example — replace with actual colors from Template/:
+# --- Color palette from Beamer/ (fill in from Phase 1) ---
+# Example — replace with actual colors from Beamer/:
 col_primary   <- "#[EXTRACTED_FROM_TEMPLATE]"
 col_secondary <- "#[EXTRACTED_FROM_TEMPLATE]"
 col_accent    <- "#[EXTRACTED_FROM_TEMPLATE]"
@@ -107,8 +107,8 @@ theme_slides <- function(base_size = 18) {
 }
 
 # --- Load pre-computed results ---
-result_h1    <- readRDS("output/result_h1.rds")
-exclusions   <- readRDS("output/exclusions.rds")
+result_h1    <- readRDS("../output/result_h1.rds")
+exclusions   <- readRDS("../output/exclusions.rds")
 # Add other RDS loads as needed
 
 # --- Figure: Main result (condition means) ---
@@ -127,7 +127,7 @@ fig_main <- [reconstruct from RDS] |>
   theme_slides()
 
 # Beamer figure dimensions: 4:3 ratio, transparent background
-ggsave("slides/figures/fig_main.pdf",
+ggsave("../slides/figures/fig_main.pdf",
        fig_main, width = 8, height = 5,
        bg = "transparent")
 
@@ -137,12 +137,12 @@ ggsave("slides/figures/fig_main.pdf",
 ### 2b: Run the script and verify
 
 ```bash
-cd "Study N" && Rscript scripts/slides_figures.R 2>&1 | tail -20
+cd "Study N/RAgent works" && Rscript scripts/slides_figures.R 2>&1 | tail -20
 ```
 
 Check:
 - Exit code 0
-- `Study N/slides/figures/` contains at least one `.pdf`
+- `Study N/RAgent works/slides/figures/` contains at least one `.pdf`
 - File sizes > 0
 
 **Do not proceed to Phase 3 until all figure PDFs exist.**
@@ -151,7 +151,7 @@ Check:
 
 ## Phase 3: Write the .tex File
 
-Write `Study N/slides/study_N_slides.tex` (use actual study name in filename).
+Write `Study N/RAgent works/slides/study_N_slides.tex` (use actual study name in filename).
 
 ### 3a: Preamble
 
@@ -161,7 +161,7 @@ Mirror the template exactly:
 \documentclass[aspectratio=169,10pt]{beamer}   % match template options
 
 % --- Follow template preamble exactly ---
-\input{../../Template/[preamble_file]}           % adjust relative path to Template/
+\input{../../Beamer/[preamble_file]}           % adjust relative path to Beamer/
 % or copy \usepackage and \definecolor blocks if \input isn't possible
 
 % --- Title info (fill from CLAUDE.md / Study README) ---
@@ -258,19 +258,19 @@ Tables go on supplementary frames at the end, not in the main flow.
 
 ## Phase 4: Compile
 
-Run 3-pass XeLaTeX from the study's `slides/` directory (XeLaTeX handles unicode and most Beamer themes):
+Run 3-pass XeLaTeX from the agent's `slides/` directory (XeLaTeX handles unicode and most Beamer themes):
 
 ```bash
-cd "Study N/slides" && \
-  TEXINPUTS=../../Template/:$TEXINPUTS \
+cd "Study N/RAgent works/slides" && \
+  TEXINPUTS=../../../Beamer/:$TEXINPUTS \
   xelatex -interaction=nonstopmode study_N_slides.tex 2>&1 | tail -30
 
-cd "Study N/slides" && \
-  TEXINPUTS=../../Template/:$TEXINPUTS \
+cd "Study N/RAgent works/slides" && \
+  TEXINPUTS=../../../Beamer/:$TEXINPUTS \
   xelatex -interaction=nonstopmode study_N_slides.tex 2>&1 | grep -E "Error|Warning|Overfull" | head -20
 
-cd "Study N/slides" && \
-  TEXINPUTS=../../Template/:$TEXINPUTS \
+cd "Study N/RAgent works/slides" && \
+  TEXINPUTS=../../../Beamer/:$TEXINPUTS \
   xelatex -interaction=nonstopmode study_N_slides.tex 2>&1 | tail -5
 ```
 
@@ -282,7 +282,7 @@ cd "Study N/slides" && \
 - Grep for `undefined` — flag any undefined references or commands
 
 ### If compilation fails:
-1. Read the full log: `cat "Study N/slides/study_N_slides.log" | grep -A3 "! "`
+1. Read the full log: `cat "Study N/RAgent works/slides/study_N_slides.log" | grep -A3 "! "`
 2. Fix the specific error (missing package, undefined command, path issue)
 3. Re-compile — up to 2 fix attempts before reporting to user
 
@@ -293,13 +293,13 @@ cd "Study N/slides" && \
 Once compiled successfully:
 
 ```
-✓ Figures generated: Study N/slides/figures/ (N files)
-✓ Slides written:    Study N/slides/study_N_slides.tex (N frames)
-✓ Compiled:          Study N/slides/study_N_slides.pdf
+✓ Figures generated: Study N/RAgent works/slides/figures/ (N files)
+✓ Slides written:    Study N/RAgent works/slides/study_N_slides.tex (N frames)
+✓ Compiled:          Study N/RAgent works/slides/study_N_slides.pdf
   - Overfull hbox warnings: N
   - Total frames: N (target: ~1 per minute of talk)
 
-Slides follow template: Template/[template_name]
+Slides follow template: Beamer/[template_name]
 Color palette used: [col_primary], [col_secondary], [col_accent]
 ```
 
@@ -309,7 +309,7 @@ If there are remaining warnings or issues, list them clearly so the user can dec
 
 ## Hard Rules
 
-1. **Template is the law.** Never invent colors, fonts, environments, or layouts not present in `Template/`.
+1. **Template is the law.** Never invent colors, fonts, environments, or layouts not present in `Beamer/`.
 2. **ggplot2 only.** No base R plots, no matplotlib, no hand-drawn diagrams in the tex.
 3. **Figures first.** Every results frame leads with the figure, not the bullet list.
 4. **No full sentences on slides.** Fragment bullets only.

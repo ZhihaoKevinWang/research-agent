@@ -35,31 +35,25 @@
 ├── quality_reports/             # Project-level plans, session logs
 ├── explorations/                # Cross-study sandbox
 │
-├── Study 1/                     # Self-contained study unit
-│   ├── README.md                # Study name, hypotheses, status, N
-│   ├── preregistrations/        # Optional: OSF/AsPredicted docs
-│   ├── experiments/
-│   │   ├── stimuli/             # Images, vignettes, ads
-│   │   ├── qualtrics/           # .qsf survey exports
-│   │   └── materials/           # Consent forms, debrief scripts
-│   ├── data/
-│   │   ├── raw/                 # PROTECTED — Qualtrics exports, never modified
-│   │   ├── processed/           # Cleaned analysis-ready data
-│   │   └── codebook.md          # Variable dictionary
-│   ├── scripts/
-│   │   └── analysis.R           # Main analysis script
-│   ├── output/
-│   │   ├── figures/             # Publication-ready .pdf and .png
-│   │   └── tables/              # .html, .tex, .docx tables
-│   └── quality_reports/         # Study-level review reports
+├── Study 1/                     # Researcher's study folder (READ-ONLY for Claude)
+│   ├── README.md                # Study name, hypotheses, status, N  [read only]
+│   ├── data/                    # Raw & processed data               [read only]
+│   ├── preregistrations/        # OSF/AsPredicted docs               [read only]
+│   ├── experiments/             # Stimuli, surveys, materials         [read only]
+│   └── RAgent works/            # Claude's workspace — all writes go here
+│       ├── scripts/             # Analysis scripts (analysis.R, etc.)
+│       ├── output/
+│       │   ├── figures/         # Publication-ready .pdf and .png
+│       │   └── tables/          # .html, .tex, .docx tables
+│       └── slides/              # Presentation files
 │
-├── Study 2/                     # Identical structure
-└── Study 3/                     # Identical structure (add as needed)
+├── Study 2/                     # Same pattern
+└── Study 3/                     # Same pattern (add as needed)
 ```
 
 ## Scope Convention
 
-**Default scope is the study being worked on.** Claude reads and writes only within `Study N/` for all routine tasks. Cross-study access is granted only for `/initialize-project`, `/review-manuscript`, and explicitly cross-study requests.
+**Default scope is the study being worked on.** Claude **reads** anywhere within `Study N/` but **writes only inside `Study N/RAgent works/`**. Existing files outside `RAgent works/` are never modified or deleted. Cross-study access is granted only for `/initialize-project`, `/review-manuscript`, and explicitly cross-study requests.
 
 ---
 

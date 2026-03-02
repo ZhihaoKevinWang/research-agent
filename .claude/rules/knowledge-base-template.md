@@ -1,56 +1,95 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
-  - "scripts/**/*.R"
+  - "Study */RAgent works/**/*.R"
+  - "Beamer/**/*.tex"
 ---
 
-# Course Knowledge Base: [YOUR COURSE NAME]
+# Project Knowledge Base: [YOUR PROJECT NAME]
 
-<!-- Fill in the tables below with YOUR domain-specific content.
-     Claude reads this before creating/modifying any lecture content. -->
+<!-- Fill in the tables below with YOUR project-specific content.
+     Claude reads this automatically before creating or modifying
+     R scripts and Beamer slides within this project. -->
 
-## Notation Registry
+---
 
-| Rule | Convention | Example | Anti-Pattern |
-|------|-----------|---------|-------------|
-| | | | |
+## Construct Registry
 
-## Symbol Reference
+Key constructs used across all studies. Ensures consistent naming and operationalization.
 
-| Symbol | Meaning | Introduced |
-|--------|---------|------------|
-| | | |
+| Construct | Role | Operationalization | Scale | α (if known) |
+|-----------|------|--------------------|-------|-------------|
+| [IV name] | Focal IV | [Manipulation / measure description] | [1–7 / between-subjects] | — |
+| [DV name] | Focal DV | [Item examples] | [1–7] | [.XX] |
+| [Mediator] | Mediator | [Item examples] | [1–7] | [.XX] |
+| [Moderator] | Moderator | [Description] | [1–7 / continuous] | — |
 
-## Lecture Progression
+---
 
-| # | Title | Core Question | Key Notation | Key Method |
-|---|-------|--------------|-------------|------------|
-| 1 | | | | |
-| 2 | | | | |
+## Study Progression
 
-## Empirical Applications
+| # | Study Name | Design | N target | Status | Key IV | Key DV |
+|---|-----------|--------|----------|--------|--------|--------|
+| 1 | [Name] | [between / within, N conditions] | [N] | [Planning / Collected / Analyzed] | [IV] | [DV] |
+| 2 | [Name] | | | | | |
 
-| Application | Paper | Dataset | Lecture(s) | Purpose |
-|------------|-------|---------|------------|---------|
-| | | | | |
+---
 
-## Design Principles
+## Analysis Conventions
 
-| Principle | Evidence | Lectures Applied |
-|-----------|----------|-----------------|
-| | | |
+Project-wide defaults. Override per-study in `Study N/RAgent works/README.md`.
 
-## Anti-Patterns (Don't Do This)
+| Convention | Value | Rationale |
+|-----------|-------|-----------|
+| Alpha threshold | 0.05 (two-tailed) | Standard in JCR/JMR |
+| Power target | 0.80 | Conventional minimum |
+| Effect size reference | d = [X] | [Source: pilot / prior work] |
+| Seed convention | `set.seed(YYYYMMDD)` | Data-collection date |
+| Mediation | PROCESS macro (Model 4) | Hayes 2018 |
+| Path convention | `here::here()` or relative from `RAgent works/` | |
 
-| Anti-Pattern | What Happened | Correction |
-|-------------|---------------|-----------|
-| | | |
+---
 
-## R Code Pitfalls
+## R Packages (Standard Stack)
 
-| Bug | Impact | Fix |
-|-----|--------|-----|
-| | | |
+```r
+library(tidyverse)   # data wrangling + ggplot2
+library(rstatix)     # pipe-friendly ANOVA, t-tests
+library(effectsize)  # Cohen's d, eta-squared
+library(emmeans)     # contrasts and marginal means
+library(mediation)   # or use PROCESS via source()
+library(gt)          # tables
+library(here)        # robust paths
+```
 
-<!-- For research projects, add: Estimand Registry, DGP Configs, Tolerance Thresholds -->
+---
+
+## Figure Standards
+
+| Property | Value |
+|----------|-------|
+| Theme | `theme_minimal()` + project customizations |
+| Color palette | [PLACEHOLDER — fill from Beamer/beamercolorthemeaggie.sty] |
+| DPI | 300 |
+| Format | PDF (print) + PNG (supplementary) |
+| Error bars | 95% CI (not SE) |
+| Width | 6.5 in (single column) |
+
+---
+
+## R Code Anti-Patterns
+
+| Anti-Pattern | Problem | Correct Approach |
+|-------------|---------|-----------------|
+| `set.seed()` inside a loop | Non-reproducible | Set once at top of script |
+| `p < .05` binary reporting | Loses information | Report exact p, effect size, CI |
+| `mean()` on Likert without α | Assumes unidimensionality | Report α, consider composite |
+| Hard-coded absolute paths | Breaks on other machines | Use `here::here()` or relative paths |
+| Unnamed ANOVA contrasts | Uninterpretable output | Label all contrasts explicitly |
+
+---
+
+<!-- Add project-specific sections as needed:
+     - Exclusion criteria and rationale
+     - Known data quirks (e.g., specific Qualtrics variable names)
+     - Planned robustness checks
+-->
